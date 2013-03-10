@@ -1,4 +1,5 @@
 require 'spell_checker'
+require 'readline'
 class CLI
   def initialize
     display_banner
@@ -11,17 +12,16 @@ class CLI
   end
   def run
     puts "Type in a word after the prompt to get suggestions"
-    while(true)
-      print "> "
-      word=gets
-      suggestions=@sc.suggest(word)
-      if(suggestions.empty?)
-        puts "No Suggestions"
-      else
-        puts suggestions.first[:word]
-
-        puts suggestions.collect {|w| w[:word]}.join ", "
+    begin
+      word=Readline.readline("> ",true)
+      unless(word.nil? or word.strip.empty?)
+        suggestions=@sc.suggest(word)
+        if(suggestions.empty?)
+          puts "No Suggestions"
+        else
+          puts suggestions.first[:word]
+        end
       end
-    end
+    end while(word and not word.strip.empty?)
   end
 end

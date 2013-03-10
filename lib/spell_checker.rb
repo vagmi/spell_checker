@@ -20,9 +20,11 @@ class SpellChecker
   end
 
   def suggest(word)
-    key=@classifier.classify(clean(word))
+    word=clean(word)
+    return [] if word.empty?
+    key=@classifier.classify(word)
     matches = @classifications[key]
-    return [] unless matches
+    return [] unless matches 
     suggestions = matches.collect do |m| 
       { word: m, 
         distance: TextUtils::Levenshtein.distance(word,m) } 
@@ -32,6 +34,7 @@ class SpellChecker
     suggestions 
   end
   def clean(word)
+    return "" unless word
     word.strip.downcase.gsub(/[^a-z]/,'')
   end
 end
