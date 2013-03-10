@@ -10,12 +10,22 @@ class SpellChecker
                   :soundex => TextUtils::SoundexClassifier}[options[:classifier]]
     init!
   end
+
   def init!
-    dictionary = File.open(@corpus).read.lines.collect { |line| line.strip.downcase }
-    dictionary.each do |word|
-      key = @classifier.classify(word)
-      @classifications[key] ||= []
-      @classifications[key] << word
+    corpus_stat = File::Stat.new(@corpus)
+    cache_stat = File::Stat.new("cache.dump") if File.exists?("cache.dump")
+    if(cache_stat and cache_stat.mtime > corpus_stat.mtime)
+      @classifications=Marshal.load(File.read("cache.dump"))
+    else
+      dictionary = File.open(@corpus).read.lines.collect { |line| line.strip.downcase }
+      dictionary.each do |word|
+        key = @classifier.classify(word)
+        @classifications[key] ||= []
+        @classifications[key] << word
+      end
+      File.open('cache.dump','w') do |f| 
+        f.write(Marshal.dump(@classifications))
+      end
     end
   end
 

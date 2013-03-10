@@ -3,7 +3,7 @@ require 'spell_checker'
 
 describe SpellChecker do
   it "should give valid suggestions" do
-    spell_checker=SpellChecker.new :classifier=>:soundex
+    spell_checker=SpellChecker.new
     cases = {"sheeeep"=>"sheep",
              "peepple"=>"people",
              "inSIDE"=>"inside",
